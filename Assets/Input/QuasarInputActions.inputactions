@@ -1,0 +1,34 @@
+{
+    "name": "QuasarInputActions",
+    "maps": [
+        {
+            "name": "Touch1",
+            "id": "34250d31-3dcf-45b3-8dfe-70d45fb717ab",
+            "actions": [
+                {
+                    "name": "PullSling",
+                    "type": "Button",
+                    "id": "17ec1da4-9b72-4d99-bb5c-690e076990a5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "22b922ba-5da5-4be3-8f2c-9af5930d4b65",
+                    "path": "<Touchscreen>/primaryTouch/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PullSling",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

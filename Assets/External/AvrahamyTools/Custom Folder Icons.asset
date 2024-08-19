@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cda8da0eb68eb14eae803fe346751b4, type: 3}
+  m_Name: Custom Folder Icons
+  m_EditorClassIdentifier: 
+  folders:
+  - key: Design
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: e28cd1dbeaf0d4c25b0485afed492dc5, type: 3}
+    largeIcon: {fileID: 2800000, guid: e28cd1dbeaf0d4c25b0485afed492dc5, type: 3}
+    affectSubFolders: 0
+  - key: Design
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: e28cd1dbeaf0d4c25b0485afed492dc5, type: 3}
+    largeIcon: {fileID: 2800000, guid: e28cd1dbeaf0d4c25b0485afed492dc5, type: 3}
+    affectSubFolders: 1
+  - key: Scripts
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: e4f37feacea0e44b2aa6227be016b77a, type: 3}
+    largeIcon: {fileID: 2800000, guid: e4f37feacea0e44b2aa6227be016b77a, type: 3}
+    affectSubFolders: 0
+  - key: Scripts
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: e4f37feacea0e44b2aa6227be016b77a, type: 3}
+    largeIcon: {fileID: 2800000, guid: e4f37feacea0e44b2aa6227be016b77a, type: 3}
+    affectSubFolders: 1
+  - key: Audio
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: ffd38a77b6f4f4027b8739f1e581b30a, type: 3}
+    largeIcon: {fileID: 2800000, guid: ffd38a77b6f4f4027b8739f1e581b30a, type: 3}
+    affectSubFolders: 0
+  - key: Animations
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: 3fce85c7e838d4e5aa5c98396816f0f8, type: 3}
+    largeIcon: {fileID: 2800000, guid: 3fce85c7e838d4e5aa5c98396816f0f8, type: 3}
+    affectSubFolders: 0
+  - key: Videos
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: 3fce85c7e838d4e5aa5c98396816f0f8, type: 3}
+    largeIcon: {fileID: 2800000, guid: 3fce85c7e838d4e5aa5c98396816f0f8, type: 3}
+    affectSubFolders: 0
+  - key: ScriptableObjects
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: 05fd00d8901a84c44a73a6ed1b5e0868, type: 3}
+    largeIcon: {fileID: 2800000, guid: 05fd00d8901a84c44a73a6ed1b5e0868, type: 3}
+    affectSubFolders: 0
+  - key: ScriptableObjects
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: 05fd00d8901a84c44a73a6ed1b5e0868, type: 3}
+    largeIcon: {fileID: 2800000, guid: 05fd00d8901a84c44a73a6ed1b5e0868, type: 3}
+    affectSubFolders: 1
+  - key: External
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: 11a50d8953c26a3478e6fcb42ed78c1e, type: 3}
+    largeIcon: {fileID: 2800000, guid: 11a50d8953c26a3478e6fcb42ed78c1e, type: 3}
+    affectSubFolders: 1
+  - key: External
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: 11a50d8953c26a3478e6fcb42ed78c1e, type: 3}
+    largeIcon: {fileID: 2800000, guid: 11a50d8953c26a3478e6fcb42ed78c1e, type: 3}
+    affectSubFolders: 0
+  - key: Prefabs
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: e3298742ee050694e8c600253ae6676d, type: 3}
+    largeIcon: {fileID: 2800000, guid: e3298742ee050694e8c600253ae6676d, type: 3}
+    affectSubFolders: 0
+  - key: Prefabs
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: e3298742ee050694e8c600253ae6676d, type: 3}
+    largeIcon: {fileID: 2800000, guid: e3298742ee050694e8c600253ae6676d, type: 3}
+    affectSubFolders: 1
+  - key: Scenes
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: a1ea660aacc3c49a993535be58881b41, type: 3}
+    largeIcon: {fileID: 2800000, guid: a1ea660aacc3c49a993535be58881b41, type: 3}
+    affectSubFolders: 1
+  - key: Scenes
+    keyType: 0
+    smallIcon: {fileID: 2800000, guid: a1ea660aacc3c49a993535be58881b41, type: 3}
+    largeIcon: {fileID: 2800000, guid: a1ea660aacc3c49a993535be58881b41, type: 3}
+    affectSubFolders: 0
+  - key: Assets/Quasar
+    keyType: 1
+    smallIcon: {fileID: 2800000, guid: 5a26a885288734e0c8b037fc1fcd22d3, type: 3}
+    largeIcon: {fileID: 2800000, guid: 5a26a885288734e0c8b037fc1fcd22d3, type: 3}
+    affectSubFolders: 0
