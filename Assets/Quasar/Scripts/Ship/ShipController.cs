@@ -1,3 +1,4 @@
+using Quasar.Controllers;
 using Quasar.Tiling;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,12 +6,15 @@ using UnityEngine;
 
 namespace Quasar.Ship
 {
-    public class ShipController : MonoBehaviour
+    public class ShipController : SingletonController<ShipController>
     {
     
         [Header("Ship parameters")]
         [SerializeField] private float maxPullDistance = 2f;
         [SerializeField] private float shipShootForce = 5f;
+        [SerializeField] private float shipRotationSpeed = 3f;
+
+
 
         [Header("Object links")]
         [SerializeField] private ShipView shipView;
@@ -21,28 +25,58 @@ namespace Quasar.Ship
         private Coroutine m_PullCR = null;
         private InputController m_inputController;
 
-        public static ShipController Instance { get; private set; }
         public bool IsClickingShip { get; private set; }
         public bool IsMidPull { get; private set; }
+
+        public Vector3 ShootVector { get; private set; } = Vector3.zero;
+        public float NormalizedPullStrength { get => Mathf.Clamp01(ShootVector.magnitude / maxPullDistance); }
+        public Vector3 DirectionTarget { get; set; } = Vector3.forward;
 
         public Vector3 GetShipVelocity()
             => shipRb.velocity;
 
 
         // ====== PRIVATE API: ====== //
-
-    
-
-        private void Awake()
+        protected override void Awake()
         {
-            Instance = this;
+            base.Awake();
             IsMidPull = false;
-            m_slingPullPlane = new Plane(Vector3.up, transform.position);
+            m_slingPullPlane = new Plane(Vector3.up, shipView.transform.position);
         }
 
         private void Start()
         {
             m_inputController = InputController.Instance;
+        }
+
+
+
+     
+
+        private void Update()
+        {
+            Vector3 shipPos = shipView.transform.position;
+            var tup = TilingController.Instance.GetClosestTile(shipPos).GetYandNormalAtPos(shipPos);
+            if (tup != null)
+            {
+                shipView.transform.position = new Vector3(shipPos.x, tup.Item1, shipPos.z);
+                Vector3 alignedTarget = -Vector3.Cross(Vector3.Cross(DirectionTarget, tup.Item2), tup.Item2);
+
+                if (Vector3.Angle(shipView.transform.forward, alignedTarget) > 0.1f)
+                {
+                    LerpRotationTowards(alignedTarget, shipRotationSpeed);
+                }
+            }
+
+            if (!IsMidPull)
+            {
+                DirectionTarget = GetShipVelocity().normalized;
+            }
+        }
+
+        public void LerpRotationTowards(Vector3 direction, float relativeSpeed)
+        {
+            shipView.transform.forward = Vector3.Lerp(shipView.transform.forward, direction, relativeSpeed * shipRotationSpeed * Time.deltaTime);
         }
 
         public void ShipViewTouchStart()
@@ -65,21 +99,22 @@ namespace Quasar.Ship
             if (IsMidPull)
                 yield break;
             IsMidPull = true;
-            Vector3 shipPos, pullPos, shootVector = Vector3.zero;
+            Vector3 shipPos, pullPos = Vector3.zero;
             while (IsMidPull)
             {
                 shipPos = shipView.transform.position;
                 pullPos = ScreenToSlingPullPlanePos();
                 if (Vector3.Distance(shipPos, pullPos) > maxPullDistance)
                     pullPos = shipPos + (pullPos - shipPos).normalized * maxPullDistance;
-                shootVector = shipPos - pullPos;
+                
+                ShootVector = shipPos - pullPos;
                 slingView.SetSlingPos(pullPos);
                 // aim ship:
-                //shipView.LerpRotationTowards(shootVector, PullRelativeForce(shootVector));
-                shipView.DirectionTarget = shootVector;
+                DirectionTarget = ShootVector.normalized;
                 yield return null;
             }
-            ShootShip(shootVector);
+            
+            ShootShip(ShootVector);
         }
 
         public void ShootShip(Vector3 shootVector)

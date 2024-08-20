@@ -101,12 +101,12 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EdgeSmoothness: 0.01
+    - _EdgeSmoothness: 0.05
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _LineThickness: 0.05
+    - _LineThickness: 0.03
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
