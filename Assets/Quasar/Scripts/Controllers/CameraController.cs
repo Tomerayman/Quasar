@@ -10,6 +10,7 @@ namespace Quasar.PlayerCamera
 
         [Header("Design parameters")]
         [SerializeField] private Vector3 cameraToShipVector = new Vector3(0, 15, 0);
+        [SerializeField, Range(5, 60)] private float cameraDownAngle = 20f;
         [SerializeField] private float movementThreshold = 0.1f;
         [SerializeField] private float cameraMoveLerpSpeed = 2f;
         //[Range(0f, 50f)]
@@ -19,17 +20,19 @@ namespace Quasar.PlayerCamera
         [SerializeField] private Camera cameraView;
         [SerializeField] private Transform shipViewTransform;
         private Transform m_cameraTransform;
+        private float m_baseCameraXTilt;
 
         #region MonoB
         private void Awake()
         {
             m_cameraTransform = cameraView.transform;
             m_cameraTransform.position = shipViewTransform.position + cameraToShipVector;
+            m_baseCameraXTilt = m_cameraTransform.eulerAngles.x;
         }
 
         private void FixedUpdate()
         {
-            LerpFollowShip();
+            LerpCameraToShip();
         }
 
 
@@ -37,35 +40,31 @@ namespace Quasar.PlayerCamera
 
         #region Private
 
-        private void LerpFollowShip()
+
+        private void LerpCameraToShip()
         {
-            Vector3 cameraOffset = cameraToShipVector;
+            // Calculate the current offset from the ship to the camera
+            Vector3 currOffset = (m_cameraTransform.position - shipViewTransform.position).normalized * cameraToShipVector.magnitude;
 
-            // Lower camera based on pull:
+            // Calculate the target offset based on the ship's orientation
+            Vector3 targetOffset = 
+                shipViewTransform.up * cameraToShipVector.y +
+                shipViewTransform.forward * cameraToShipVector.z;
+
+            // Determine the step angle for rotating the offset
+            float stepAngle = cameraMoveLerpSpeed * Time.deltaTime * 
+                              Vector3.Angle(currOffset, targetOffset);
             
-            //float cameraRotation = 0;
-            //if (ShipController.Instance.NormalizedPullStrength > 0.001)
-            //{
-            //    cameraRotation = ShipController.Instance.NormalizedPullStrength * -maxCameraRotationDegreesOnPull;
-            //    cameraOffset = Quaternion.Euler(cameraRotation, 0, 0) * cameraOffset;
-            //}
-            
-            
-            // Immediate position target for lerping
-            Vector3 posTarget = shipViewTransform.position +
-                shipViewTransform.up * cameraOffset.y +
-                shipViewTransform.forward * cameraOffset.z;
+            // Calculate the new offset using Vector3.RotateTowards
+            Vector3 newOffset = Vector3.RotateTowards(currOffset, targetOffset, stepAngle * Mathf.Deg2Rad, 0);
 
-            // Immediate rotation target for lerping
-            Quaternion rotTarget = Quaternion.Euler(m_cameraTransform.eulerAngles.x,
-                shipViewTransform.eulerAngles.y, m_cameraTransform.eulerAngles.z);
+            // Update the camera's position
+            m_cameraTransform.position = shipViewTransform.position + newOffset;
 
-            // Lerp step, adjusted by ship's velocity                
-            float step = cameraMoveLerpSpeed * Time.deltaTime * Mathf.Max(ShipController.Instance.GetShipVelocity().magnitude, 1);
+            // Update the camera's rotation to look at the ship, maintaining its position on the screen
+            m_cameraTransform.rotation = Quaternion.LookRotation(shipViewTransform.position - m_cameraTransform.position, Vector3.up);
+            m_cameraTransform.eulerAngles -= Vector3.right * cameraDownAngle;
 
-            // LERP
-            m_cameraTransform.position = Vector3.Lerp(m_cameraTransform.position, posTarget, step);
-            m_cameraTransform.rotation = Quaternion.Lerp(m_cameraTransform.rotation, rotTarget, step);
         }
 
         #endregion Private

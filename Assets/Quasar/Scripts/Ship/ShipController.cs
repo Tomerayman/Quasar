@@ -11,7 +11,7 @@ namespace Quasar.Ship
     
         [Header("Ship parameters")]
         [SerializeField] private float maxPullDistance = 2f;
-        [SerializeField] private float shipShootForce = 5f;
+        [field: SerializeField] public float ShipShootForce { get; private set; } = 5f;
         [SerializeField] private float shipRotationSpeed = 3f;
 
 
@@ -119,7 +119,7 @@ namespace Quasar.Ship
 
         public void ShootShip(Vector3 shootVector)
         {
-            shipRb.AddForce(shipShootForce * shootVector, ForceMode.Impulse);
+            shipRb.velocity = ShipShootForce * shootVector;
         }
 
         private Vector3 ScreenToSlingPullPlanePos()

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Quasar.Gravity;
-using System.Drawing;
 using System;
 
 namespace Quasar.Tiling
@@ -48,7 +47,7 @@ namespace Quasar.Tiling
             }
             else
             {
-                Debug.LogError("LineMaterial is not assigned.");
+                UnityEngine.Debug.LogError("LineMaterial is not assigned.");
             }
             Tile = new SpaceTile(transform.position, gridCols, gridRows, gridInterval);
             transform.position = Tile.RootPosition;
