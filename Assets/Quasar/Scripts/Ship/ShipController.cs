@@ -1,5 +1,6 @@
 using Quasar.Controllers;
 using Quasar.Tiling;
+using Quasar.UI.Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace Quasar.Ship
         [Header("Object links")]
         [SerializeField] private ShipView shipView;
         [SerializeField] private Rigidbody shipRb;
-        [SerializeField] private SlingView slingView;
+        [SerializeField] private SlingBarView slingBarView;
 
         private Plane m_slingPullPlane;
         private Coroutine m_PullCR = null;
@@ -91,15 +92,20 @@ namespace Quasar.Ship
         public void ShipViewHoverExit()
         {
             if (IsClickingShip && !IsMidPull)
+            {
                 m_PullCR = StartCoroutine(PullSling());
+            }
         }
 
         private IEnumerator PullSling()
         {
             if (IsMidPull)
                 yield break;
+
             IsMidPull = true;
+            slingBarView.SetBarVisible(true);
             Vector3 shipPos, pullPos = Vector3.zero;
+
             while (IsMidPull)
             {
                 shipPos = shipView.transform.position;
@@ -108,13 +114,14 @@ namespace Quasar.Ship
                     pullPos = shipPos + (pullPos - shipPos).normalized * maxPullDistance;
                 
                 ShootVector = shipPos - pullPos;
-                slingView.SetSlingPos(pullPos);
+                slingBarView.UpdatePosition();
                 // aim ship:
                 DirectionTarget = ShootVector.normalized;
                 yield return null;
             }
             
             ShootShip(ShootVector);
+            slingBarView.SetBarVisible(false);
         }
 
         public void ShootShip(Vector3 shootVector)
