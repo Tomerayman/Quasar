@@ -15,7 +15,7 @@ namespace Quasar.Gravity
             base.Awake();
         }
 
-        protected void Start()
+        protected void Update()
         {
             ApplyGravityToTiles(GravityModel.GravityMakers, TilingModel.TileViews);
         }
@@ -31,12 +31,17 @@ namespace Quasar.Gravity
             foreach (SpaceTileView tileView in tiles)
             {
                 Bounds tileBounds = tileView.Tile.GetTileBounds();
+                List<IGravityMaker> tileGravityMakers = new List<IGravityMaker>();
                 foreach (IGravityMaker gravityMaker in gravityMakers)
                 {
                     if (GravityMakerAffectsTile(gravityMaker, tileBounds))
                     {
-                        tileView.AddGravityMaker(gravityMaker);
+                        tileGravityMakers.Add(gravityMaker);
                     }
+                }
+                if (tileGravityMakers.Count > 0)
+                {
+                    tileView.AddGravityMakers(tileGravityMakers);
                 }
             }
         }

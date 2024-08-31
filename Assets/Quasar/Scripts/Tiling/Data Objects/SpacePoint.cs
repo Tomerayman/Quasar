@@ -18,6 +18,9 @@ namespace Quasar.Tiling
             Gravity += gravity;
         }
 
-
+        public void ResetGravity()
+        {
+            Gravity = 0;
+        }
     }
 }

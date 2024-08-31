@@ -88,10 +88,9 @@ namespace Quasar.Tiling
         //    return normal;
         //}
 
-        public List<SpacePoint> GetPointsAround(Vector2 xzPos, float range)
+        public HashSet<SpacePoint> GetPointsAround(Vector2 xzPos, float range)
         {
-            List<SpacePoint> points = new List<SpacePoint>();
-            //xzPos -= new Vector2(RootPosition.x, RootPosition.z);
+            HashSet<SpacePoint> points = new HashSet<SpacePoint>();
 
             // Calculate the range in world units
             float rangeInWorldUnits = range * Interval;

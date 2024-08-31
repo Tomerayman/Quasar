@@ -115,6 +115,7 @@ namespace Quasar.Ship
                 
                 ShootVector = shipPos - pullPos;
                 slingBarView.UpdatePosition();
+                shipView.TailChargeOpen(ShootVector.magnitude);
                 // aim ship:
                 DirectionTarget = ShootVector.normalized;
                 yield return null;
@@ -122,6 +123,7 @@ namespace Quasar.Ship
             
             ShootShip(ShootVector);
             slingBarView.SetBarVisible(false);
+            shipView.TailChargeOpen(0);
         }
 
         public void ShootShip(Vector3 shootVector)

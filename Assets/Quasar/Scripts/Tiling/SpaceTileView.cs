@@ -16,6 +16,9 @@ namespace Quasar.Tiling
 
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
+        private Dictionary<IGravityMaker, HashSet<SpacePoint>> currGravity =
+            new Dictionary<IGravityMaker, HashSet<SpacePoint>>();
+
         public SpaceTile Tile { get; private set; }
 
         private void Awake()
@@ -54,12 +57,33 @@ namespace Quasar.Tiling
             meshFilter.sharedMesh = TileMeshUtility.CreateSpaceTileMesh(Tile);
         }
 
-        public void AddGravityMaker(IGravityMaker gm)
+        public void AddGravityMakers(List<IGravityMaker> gravityMakers)
         {
-            ApplyGravity(gm);
+            // Reset Gravity
+            foreach (HashSet<SpacePoint> affectedSpacePoints in currGravity.Values)
+            {
+                UpdateMeshPoints(affectedSpacePoints, true);
+                foreach (SpacePoint point in affectedSpacePoints)
+                {
+                    point.ResetGravity();
+                }
+            }
+            currGravity.Clear();
+
+            HashSet<SpacePoint> affectedPoints = new HashSet<SpacePoint>();
+
+            // Add new Gravity makers and their points
+            foreach(IGravityMaker gravityMaker in gravityMakers)
+            {
+                HashSet<SpacePoint> gmAffectedPoints = AddGravity(gravityMaker);
+                currGravity[gravityMaker] = gmAffectedPoints;
+                affectedPoints.UnionWith(gmAffectedPoints);
+            }
+
+            UpdateMeshPoints(affectedPoints, false);
         }
 
-        private void ApplyGravity(IGravityMaker gm)
+        private HashSet<SpacePoint> AddGravity(IGravityMaker gm)
         {
             // Get gravity maker position and range
             Vector3 gravityMakerPos = gm.ObjectTransform.position;
@@ -67,7 +91,7 @@ namespace Quasar.Tiling
             int discreteRange = Mathf.RoundToInt(gm.GravityRange);
 
             // Get potentially affected points
-            List<SpacePoint> affectedPoints = Tile.GetPointsAround(gravityCenter, discreteRange);
+            HashSet<SpacePoint> affectedPoints = Tile.GetPointsAround(gravityCenter, discreteRange);
             float maxRange = gm.GravityRange * Tile.Interval;
             
 
@@ -80,13 +104,13 @@ namespace Quasar.Tiling
                 point.TakeGravity(Mathf.Pow(distanceRatio, 2) * gm.GravityForce);
             }
 
-            UpdateMeshPoints(affectedPoints);
+            return new HashSet<SpacePoint>(affectedPoints);
 
             Vector2 XZ(Vector3 v3)
                 => new Vector2(v3.x, v3.z);
         }
 
-        private void UpdateMeshPoints(List<SpacePoint> points)
+        private void UpdateMeshPoints(HashSet<SpacePoint> points, bool undo)
         {
             Mesh mesh = meshFilter.mesh;
             Vector3[] vertices = mesh.vertices;
@@ -95,7 +119,7 @@ namespace Quasar.Tiling
             foreach (var point in points)
             {
                 int vertexIdx = Tile.GetPointVertexIdx(point.Row, point.Col);
-                vertices[vertexIdx] += Vector3.down * point.Gravity;
+                vertices[vertexIdx] += point.Gravity * (undo ? Vector3.up : Vector3.down);
             }
 
             mesh.vertices = vertices;
@@ -110,7 +134,7 @@ namespace Quasar.Tiling
         public Tuple<float, Vector3> GetYandNormalAtPos(Vector3 position)
         {
             // Get neighbor points of the parameter position
-            List<SpacePoint> neighborPoints = Tile.GetPointsAround(
+            HashSet<SpacePoint> neighborPoints = Tile.GetPointsAround(
                 new Vector2(position.x, position.z), 1.5f / Tile.Interval);
             if (neighborPoints.Count == 0)
             {
