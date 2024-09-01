@@ -8,5 +8,8 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: d1c3109bdb54ad54c8a2b2838528e640
+  - enabled: 1
+    path: Assets/Quasar/Scenes/MainScene 1.unity
+    guid: af1b22d5605d1194d81385754e71b372
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 5578bbc9238edf14395581e66a15987e, type: 2}

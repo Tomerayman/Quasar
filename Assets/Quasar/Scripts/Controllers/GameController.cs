@@ -19,7 +19,7 @@ namespace Quasar.Controllers
 
         protected virtual void Start()
         {
-
+            Application.targetFrameRate = 60;
         }
 
         private void Update()

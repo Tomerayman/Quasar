@@ -41,7 +41,6 @@ namespace Quasar.UI.Game
             {
                 pullVector = pullVector.normalized * maxPullLength;
             }
-            Debug.Log(OriginPos);
 
             float angle = Vector2.SignedAngle(Vector2.down, pullVector);
             barRect.eulerAngles = Vector3.forward * angle;

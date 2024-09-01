@@ -60,7 +60,7 @@ namespace Quasar.Ship
             var tup = TilingController.Instance.GetClosestTile(shipPos).GetYandNormalAtPos(shipPos);
             if (tup != null)
             {
-                shipView.transform.position = new Vector3(shipPos.x, tup.Item1, shipPos.z);
+                //shipView.transform.position = new Vector3(shipPos.x, tup.Item1, shipPos.z);
                 Vector3 alignedTarget = -Vector3.Cross(Vector3.Cross(DirectionTarget, tup.Item2), tup.Item2);
 
                 if (Vector3.Angle(shipView.transform.forward, alignedTarget) > 0.1f)
