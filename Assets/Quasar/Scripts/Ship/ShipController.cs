@@ -42,7 +42,6 @@ namespace Quasar.Ship
         {
             base.Awake();
             IsMidPull = false;
-            m_slingPullPlane = new Plane(Vector3.up, shipView.transform.position);
         }
 
         private void Start()
@@ -51,23 +50,17 @@ namespace Quasar.Ship
         }
 
 
-
-     
-
         private void Update()
         {
-            Vector3 shipPos = shipView.transform.position;
-            var tup = TilingController.Instance.GetClosestTile(shipPos).GetYandNormalAtPos(shipPos);
-            if (tup != null)
-            {
-                //shipView.transform.position = new Vector3(shipPos.x, tup.Item1, shipPos.z);
-                Vector3 alignedTarget = -Vector3.Cross(Vector3.Cross(DirectionTarget, tup.Item2), tup.Item2);
 
-                if (Vector3.Angle(shipView.transform.forward, alignedTarget) > 0.1f)
-                {
-                    LerpRotationTowards(alignedTarget, shipRotationSpeed);
-                }
+            Vector3 alignedTarget = DirectionTarget;
+
+            if (Vector3.Angle(shipView.transform.forward, alignedTarget) > 0.1f)
+            {
+                LerpRotationTowards(alignedTarget, Mathf.Max(1, shipRb.velocity.magnitude));
             }
+            shipView.FloorShip();
+
 
             if (!IsMidPull)
             {
@@ -110,14 +103,17 @@ namespace Quasar.Ship
             {
                 shipPos = shipView.transform.position;
                 pullPos = ScreenToSlingPullPlanePos();
-                if (Vector3.Distance(shipPos, pullPos) > maxPullDistance)
-                    pullPos = shipPos + (pullPos - shipPos).normalized * maxPullDistance;
-                
                 ShootVector = shipPos - pullPos;
+                if (Vector3.Distance(shipPos, pullPos) > maxPullDistance)
+                {
+                    pullPos = shipPos + (pullPos - shipPos).normalized * maxPullDistance;
+                }
+                
                 slingBarView.UpdatePosition();
                 shipView.TailChargeOpen(ShootVector.magnitude);
                 // aim ship:
                 DirectionTarget = ShootVector.normalized;
+                Debug.Log(DirectionTarget);
                 yield return null;
             }
             
@@ -135,8 +131,11 @@ namespace Quasar.Ship
         {
             Ray ray = Camera.main.ScreenPointToRay(InputController.CurrMainTouchScreenPos);
             float enter;
+            m_slingPullPlane = new Plane(Vector3.up, shipView.transform.position);
             if (m_slingPullPlane.Raycast(ray, out enter))
+            {
                 return ray.GetPoint(enter);
+            }
             return Vector3.zero;
         }
 

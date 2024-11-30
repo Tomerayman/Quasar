@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Linq;
-using System.Drawing;
 
 namespace Quasar.Tiling
 {
@@ -60,33 +58,6 @@ namespace Quasar.Tiling
             tileBounds.SetMinMax(RootPosition, new Vector3(last.x, RootPosition.y, last.z));
             return tileBounds;
         }
-
-        //public Vector3 GetPointNormal(int row, int col)
-        //{
-        //    // Ensure point is within bounds
-        //    if (row < 0 || row >= SpacePoints.GetLength(0) || col < 0 || col >= SpacePoints.GetLength(1))
-        //    {
-        //        return Vector3.down; // Return a default normal if out of bounds
-        //    }
-
-        //    // Get the position of the current point
-        //    Vector3 currentPoint = GetPointPosition(row, col);
-
-        //    // Get the positions of neighboring points
-        //    Vector3 left = (col > 0) ? GetPointPosition(row, col - 1) : currentPoint;
-        //    Vector3 right = (col < SpacePoints.GetLength(1) - 1) ? GetPointPosition(row, col + 1) : currentPoint;
-        //    Vector3 down = (row > 0) ? GetPointPosition(row - 1, col) : currentPoint;
-        //    Vector3 up = (row < SpacePoints.GetLength(0) - 1) ? GetPointPosition(row + 1, col) : currentPoint;
-
-        //    // Calculate vectors for cross product
-        //    Vector3 vec1 = right - left;
-        //    Vector3 vec2 = up - down;
-
-        //    // Compute the NEGATIVE normal using the cross product
-        //    Vector3 normal = -Vector3.Cross(vec1, vec2).normalized;
-
-        //    return normal;
-        //}
 
         public HashSet<SpacePoint> GetPointsAround(Vector2 xzPos, float range)
         {

@@ -1,11 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Quasar.Ship
 {
-    public class ShipView : MonoBehaviour
+    public class ShipView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
     {
+
+        [field: SerializeField] public float HeightFromFloor { get; private set; } = 1;
+        [field: SerializeField] public float GravityFactor { get; private set; } = 5;
+        
         [SerializeField] private Transform backPart;
         [SerializeField] private List<Transform> tailQuadrants;
         [SerializeField, Tooltip("The distance factor for the tail quadrants charge out (x) and bac (y)")]
@@ -43,27 +48,24 @@ namespace Quasar.Ship
             }
         }
 
+        public Vector3 FloorShip()
+        {
+            if (Physics.Raycast(transform.position, Vector3.down * 100, out RaycastHit hit))
+            {
+                Vector3 flooredShipPos = new Vector3(transform.position.x, hit.point.y, transform.position.z) +
+                    Vector3.up * HeightFromFloor;
+
+                transform.position = Vector3.MoveTowards(transform.position, flooredShipPos, Time.deltaTime * GravityFactor);
+            }
+            return transform.position;
+        }
+
 
         // ====== PRIVATE API: ====== //
 
         private void Start()
         {
             tailRotateCR = StartCoroutine(RotateTail());
-        }
-
-        private void OnMouseDown()
-        {
-            ShipController.Instance.ShipViewTouchStart();
-        }
-
-        private void OnMouseUp()
-        {
-            ShipController.Instance.ShipViewTouchEnd();
-        }
-
-        private void OnMouseExit()
-        {
-            ShipController.Instance.ShipViewHoverExit();
         }
 
         private IEnumerator RotateTail()
@@ -75,6 +77,19 @@ namespace Quasar.Ship
             }
         }
 
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            ShipController.Instance.ShipViewHoverExit();
+        }
 
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            ShipController.Instance.ShipViewTouchStart();
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            ShipController.Instance.ShipViewTouchEnd();
+        }
     }
 }

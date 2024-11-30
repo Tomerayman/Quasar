@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-using UnityEngine.InputSystem.LowLevel;
+using ET = UnityEngine.InputSystem.EnhancedTouch;
+
 
 public class InputController : MonoBehaviour
 {
@@ -16,11 +16,7 @@ public class InputController : MonoBehaviour
     public static InputController Instance { get; private set; }
     public static Vector2 CurrMainTouchScreenPos{ get; private set; }
 
-    private QuasarInputActions quasarInputActions;
     private Coroutine updateMainTouchScreenPosCR;
-
-
-   
 
 
     public void StartPull(InputAction.CallbackContext cc)
@@ -41,12 +37,10 @@ public class InputController : MonoBehaviour
     {
         Instance = this;
         CurrMainTouchScreenPos = Vector2.zero;
-        quasarInputActions = new QuasarInputActions();
     }
 
     private void OnEnable()
     {
-        quasarInputActions.Enable();
         //pullAction.action.Enable();
         //pullAction.action.started += StartPull;
         //pullAction.action.canceled += EndPull;    
@@ -54,14 +48,15 @@ public class InputController : MonoBehaviour
 
     private void Start()
     {
-        quasarInputActions.Touch1.PullSling.started += cc => StartPull(cc);
+        //quasarInputActions.Touch1.PullSling.started += StartPull;
         //quasarInputActions.Touch1.PullSling.performed += cc => StartPull(cc);
-        quasarInputActions.Touch1.PullSling.canceled += cc => EndPull(cc);
+        //quasarInputActions.Touch1.PullSling.canceled += EndPull;
+        updateMainTouchScreenPosCR = StartCoroutine(UpdateCurrMainTouchScreenPos());
+
     }
 
     private void OnDisable()
     {
-        quasarInputActions.Disable();
 
         //pullAction.action.started -= StartPull;
         //pullAction.action.canceled -= EndPull;
@@ -69,11 +64,18 @@ public class InputController : MonoBehaviour
 
     private IEnumerator UpdateCurrMainTouchScreenPos()
     {
-        TouchControl t = Touchscreen.current.primaryTouch;
+        ET.EnhancedTouchSupport.Enable();
+
         while (true)
         {
-            CurrMainTouchScreenPos = t.position.ReadValue();
-            //Debug.Log(CurrMainTouchScreenPos);
+            if (ET.Touch.activeTouches.Count > 0)
+            {
+                var touch = ET.Touch.activeTouches[0];
+                if (touch.screenPosition.x >= 0 && touch.screenPosition.y >= 0)
+                {
+                    CurrMainTouchScreenPos = touch.screenPosition;
+                }
+            }
             yield return null;
         }
     }

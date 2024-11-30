@@ -5,7 +5,7 @@ using System;
 
 namespace Quasar.Tiling
 {
-    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
     public class SpaceTileView : MonoBehaviour
     {
         [SerializeField, Range(1, 1000)]
@@ -16,6 +16,7 @@ namespace Quasar.Tiling
 
         private MeshFilter meshFilter;
         private MeshRenderer meshRenderer;
+        private MeshCollider meshCollider;
         private Dictionary<IGravityMaker, HashSet<SpacePoint>> currGravity =
             new Dictionary<IGravityMaker, HashSet<SpacePoint>>();
 
@@ -43,6 +44,7 @@ namespace Quasar.Tiling
         {
             meshFilter = GetComponent<MeshFilter>();
             meshRenderer = GetComponent<MeshRenderer>();
+            meshCollider = GetComponent<MeshCollider>();
 
             if (LineMaterial != null)
             {
@@ -50,7 +52,7 @@ namespace Quasar.Tiling
             }
             else
             {
-                UnityEngine.Debug.LogError("LineMaterial is not assigned.");
+                Debug.LogError("LineMaterial is not assigned.");
             }
             Tile = new SpaceTile(transform.position, gridCols, gridRows, gridInterval);
             transform.position = Tile.RootPosition;
@@ -125,6 +127,7 @@ namespace Quasar.Tiling
             mesh.vertices = vertices;
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
+            meshCollider.sharedMesh = mesh;
         }
 
         private Vector3 GetPointNormal(int row, int col)
