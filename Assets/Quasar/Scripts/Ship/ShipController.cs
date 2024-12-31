@@ -36,6 +36,9 @@ namespace Quasar.Ship
         public Vector3 GetShipVelocity()
             => shipRb.velocity;
 
+        private readonly Queue<Vector3> pullDirectionHistory = new Queue<Vector3>();
+        private const int maxHistoryFrames = 10; // Adjust based on desired smoothness
+
 
         // ====== PRIVATE API: ====== //
         protected override void Awake()
@@ -70,7 +73,7 @@ namespace Quasar.Ship
 
         public void LerpRotationTowards(Vector3 direction, float relativeSpeed)
         {
-            shipView.transform.forward = Vector3.Lerp(shipView.transform.forward, direction, relativeSpeed * shipRotationSpeed * Time.deltaTime);
+            shipView.transform.forward = Vector3.Lerp(shipView.transform.forward, direction, shipRotationSpeed * Time.deltaTime);
         }
 
         public void ShipViewTouchStart()
@@ -103,24 +106,46 @@ namespace Quasar.Ship
             {
                 shipPos = shipView.transform.position;
                 pullPos = ScreenToSlingPullPlanePos();
-                ShootVector = shipPos - pullPos;
-                if (Vector3.Distance(shipPos, pullPos) > maxPullDistance)
+                Vector3 currentPull = shipPos - pullPos;
+
+                // Enforce max pull distance
+                if (currentPull.magnitude > maxPullDistance)
                 {
                     pullPos = shipPos + (pullPos - shipPos).normalized * maxPullDistance;
+                    currentPull = shipPos - pullPos;
                 }
-                
+
+                // Add current pull to history
+                pullDirectionHistory.Enqueue(currentPull);
+                if (pullDirectionHistory.Count > maxHistoryFrames)
+                {
+                    pullDirectionHistory.Dequeue();
+                }
+
+                // Compute the averaged pull direction
+                Vector3 averagedPull = Vector3.zero;
+                foreach (var pull in pullDirectionHistory)
+                {
+                    averagedPull += pull;
+                }
+                averagedPull /= pullDirectionHistory.Count;
+
+                // Update ship's aim direction and UI
+                ShootVector = averagedPull;
+                DirectionTarget = ShootVector.normalized;
                 slingBarView.UpdatePosition();
                 shipView.TailChargeOpen(ShootVector.magnitude);
-                // aim ship:
-                DirectionTarget = ShootVector.normalized;
+
                 Debug.Log(DirectionTarget);
                 yield return null;
             }
-            
+
+            // Shoot the ship using the averaged pull vector
             ShootShip(ShootVector);
             slingBarView.SetBarVisible(false);
             shipView.TailChargeOpen(0);
         }
+
 
         public void ShootShip(Vector3 shootVector)
         {
